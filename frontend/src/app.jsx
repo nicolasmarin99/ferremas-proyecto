@@ -1,56 +1,41 @@
 import React, { useEffect, useState } from "react";
+import ProductoCard from "./components/ProductoCard";
+import Carrito from "./components/Carrito";
 
 function App() {
-const [productos, setProductos] = useState([]);
-const [carrito, setCarrito] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [carrito, setCarrito] = useState([]);
 
-  // Cargar productos desde el backend
-useEffect(() => {
+  useEffect(() => {
     fetch("http://localhost:8080/api/productos")
-    .then((res) => res.json())
-    .then((data) => setProductos(data))
-    .catch((err) => console.error("Error al cargar productos:", err));
-}, []);
+      .then((res) => res.json())
+      .then((data) => setProductos(data))
+      .catch((err) => console.error("Error al cargar productos:", err));
+  }, []);
 
-  // Agregar producto al carrito
-const agregarAlCarrito = (producto) => {
+  const agregarAlCarrito = (producto) => {
     setCarrito([...carrito, producto]);
-};
+  };
 
-return (
-    <div style={{ padding: "1rem", fontFamily: "Arial" }}>
-    <h1>Productos Ferremas</h1>
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+  return (
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">🛒 Ferremas - Productos</h1>
+
+      <div className="row">
         {productos.map((producto) => (
-        <div
+          <ProductoCard
             key={producto.id}
-            style={{
-            border: "1px solid #ccc",
-            padding: "1rem",
-            borderRadius: "5px",
-            width: "250px"
-            }}
-        >
-            <h3>{producto.nombre}</h3>
-            <p><strong>Precio:</strong> ${producto.precio}</p>
-            <p><strong>Stock:</strong> {producto.stock}</p>
-            <p><strong>Categoría:</strong> {producto.categoria}</p>
-            <button onClick={() => agregarAlCarrito(producto)}>
-            Agregar al carrito
-            </button>
-        </div>
+            producto={producto}
+            onAgregar={agregarAlCarrito}
+          />
         ))}
-    </div>
+      </div>
 
-    <hr style={{ margin: "2rem 0" }} />
-    <h2>Carrito ({carrito.length} productos)</h2>
-    <ul>
-        {carrito.map((item, index) => (
-        <li key={index}>{item.nombre} - ${item.precio}</li>
-        ))}
-    </ul>
+      <hr className="my-4" />
+      <Carrito carrito={carrito} />
     </div>
-);
+  );
 }
 
 export default App;
+

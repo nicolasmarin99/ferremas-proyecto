@@ -16,6 +16,9 @@ public class Producto {
     private Integer stock;
     private String categoria;
 
+    @Column(name = "imagen_url")
+    private String imagenUrl;
+
     // Getters y setters
 
     public Long getId() {
@@ -74,18 +77,26 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    // Constructor con todos los campos menos el ID
-public Producto(Long id, String codigo, String nombre, String marca, Double precio, Integer stock, String categoria) {
-    this.id = id;
-    this.codigo = codigo;
-    this.nombre = nombre;
-    this.marca = marca;
-    this.precio = precio;
-    this.stock = stock;
-    this.categoria = categoria;
-}
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
 
-// Constructor vacío (obligatorio para JPA)
-public Producto() {}
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
 
+    // Constructor con todos los campos menos el ID (incluye imagenUrl)
+    public Producto(Long id, String codigo, String nombre, String marca, Double precio, Integer stock, String categoria, String imagenUrl) {
+        this.id = id;
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.marca = marca;
+        this.precio = precio;
+        this.stock = stock;
+        this.categoria = categoria;
+        this.imagenUrl = imagenUrl;
+    }
+
+    // Constructor vacío (requerido por JPA)
+    public Producto() {}
 }
