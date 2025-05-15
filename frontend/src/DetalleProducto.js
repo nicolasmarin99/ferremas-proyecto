@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import './DetalleProducto.css';
 
 const DetalleProducto = () => {
   const { id } = useParams(); // <-- Captura el ID de la URL
@@ -35,7 +36,7 @@ const DetalleProducto = () => {
           <p className="card-text"><strong>Precio:</strong> ${producto.precio}</p>
           <p className="card-text"><strong>Stock:</strong> {producto.stock}</p>
           <p className="card-text"><strong>Marca:</strong> {producto.marca}</p>
-          <img src={imagenSrc} alt={producto.nombre} className="img-fluid rounded mt-3" />
+          <img src={imagenSrc} alt={producto.nombre} className="imagen-detalle" />
         </div>
       </div>
     </div>
