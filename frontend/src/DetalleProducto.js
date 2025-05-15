@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './DetalleProducto.css';
 
 const DetalleProducto = () => {
-  const { id } = useParams(); // Captura el ID de la URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [producto, setProducto] = useState(null);
 
@@ -14,11 +13,19 @@ const DetalleProducto = () => {
       .catch(err => console.error('Error al obtener producto:', err));
   }, [id]);
 
+  const agregarAlCarrito = () => {
+    const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
+    carritoActual.push(producto);
+    localStorage.setItem("carrito", JSON.stringify(carritoActual));
+    alert("✅ Producto agregado al carrito");
+    navigate("/carrito");
+  };
+
   if (!producto) {
-    return <div className="text-center mt-5 text-white">Cargando producto...</div>;
+    return <div className="text-center mt-5">Cargando producto...</div>;
   }
 
-  const imagenSrc = producto.imagenUrl?.startsWith('http')
+  const imagenSrc = producto.imagenUrl?.startsWith("http")
     ? producto.imagenUrl
     : `/img/${producto.imagenUrl}`;
 
@@ -28,13 +35,13 @@ const DetalleProducto = () => {
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
     minHeight: '100vh',
-    paddingTop: '20px',
-    paddingBottom: '20px'
+    paddingTop: '40px',
+    paddingBottom: '40px'
   };
 
   return (
     <div style={estiloFondo}>
-      <div className="container mt-5">
+      <div className="container">
         <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>
           ← Volver
         </button>
@@ -47,12 +54,10 @@ const DetalleProducto = () => {
             <p className="card-text"><strong>Stock:</strong> {producto.stock}</p>
             <p className="card-text"><strong>Marca:</strong> {producto.marca}</p>
             <p className="card-text"><strong>Descripción:</strong> {producto.descripcion}</p>
-            <img
-              src={imagenSrc}
-              alt={producto.nombre}
-              className="imagen-detalle mt-3"
-              style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain' }}
-            />
+            <img src={imagenSrc} alt={producto.nombre} className="img-fluid rounded mt-3" style={{ maxHeight: '300px', objectFit: 'cover' }} />
+            <button className="btn btn-success mt-4 w-100" onClick={agregarAlCarrito}>
+              🛒 Agregar al carrito
+            </button>
           </div>
         </div>
       </div>

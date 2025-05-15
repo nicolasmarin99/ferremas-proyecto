@@ -28,9 +28,12 @@ function App() {
   }, []);
 
   const agregarAlCarrito = (producto) => {
-    setCarrito([...carrito, producto]);
-    alert(`Agregado al carrito: ${producto.nombre}`);
-  };
+  const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
+  carritoActual.push(producto);
+  localStorage.setItem("carrito", JSON.stringify(carritoActual));
+  setCarrito(carritoActual); // Actualiza el estado también
+  alert(`✅ ${producto.nombre} agregado al carrito`);
+};
 
   const handleBusquedaChange = (e) => {
     setBusqueda(e.target.value);
@@ -74,6 +77,9 @@ function App() {
                 </li>
                 <li className="nav-item">
                   <a className="nav-link" href="#">Catálogo</a>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/carrito">Carrito</Link>
                 </li>
                 <li className="nav-item">
                   <a className="nav-link" href="#">Iniciar sesión</a>
