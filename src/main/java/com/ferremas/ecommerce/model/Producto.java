@@ -19,6 +19,9 @@ public class Producto {
     @Column(name = "imagen_url")
     private String imagenUrl;
 
+    @Column(length = 500)
+    private String descripcion;
+
     // Getters y setters
 
     public Long getId() {
@@ -85,8 +88,16 @@ public class Producto {
         this.imagenUrl = imagenUrl;
     }
 
-    // Constructor con todos los campos menos el ID (incluye imagenUrl)
-    public Producto(Long id, String codigo, String nombre, String marca, Double precio, Integer stock, String categoria, String imagenUrl) {
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    // Constructor completo
+    public Producto(Long id, String codigo, String nombre, String marca, Double precio, Integer stock, String categoria, String imagenUrl, String descripcion) {
         this.id = id;
         this.codigo = codigo;
         this.nombre = nombre;
@@ -95,8 +106,10 @@ public class Producto {
         this.stock = stock;
         this.categoria = categoria;
         this.imagenUrl = imagenUrl;
+        this.descripcion = descripcion;
     }
 
     // Constructor vacío (requerido por JPA)
     public Producto() {}
 }
+
