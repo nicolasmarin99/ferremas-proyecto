@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import { Link } from 'react-router-dom';
 
 function App() {
   const [productos, setProductos] = useState([]);
@@ -113,12 +115,15 @@ function App() {
         <div className="row">
           {productosFiltrados.map(producto => (
             <div className="col-md-4 mb-4" key={producto.id}>
-              <div className="card h-100 shadow-sm">
-                <img
-                  src="https://via.placeholder.com/300x180.png?text=Producto"
-                  className="card-img-top"
-                  alt={producto.nombre}
-                />
+              <div className="card h-100 shadow-sm card-hover">
+                <Link to={`/producto/${producto.id}`}>
+                  <img
+                    src="https://via.placeholder.com/300x180.png?text=Producto"
+                    className="card-img-top"
+                    alt={producto.nombre}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </Link>
                 <div className="card-body">
                   <h5 className="card-title">{producto.nombre}</h5>
                   <p className="card-text">

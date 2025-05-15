@@ -29,5 +29,10 @@ public class ProductoController {
     public Producto guardarProducto(@RequestBody Producto producto) {
         return productoService.guardarProducto(producto);
     }
+
+    @GetMapping("/id/{id}")
+    public Producto obtenerPorId(@PathVariable Long id) {
+    return productoService.obtenerPorId(id);
+    }
 }
 

@@ -26,6 +26,12 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
+    public Producto obtenerPorId(Long id) {
+        return productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado por ID"));
+    }
+
+    @Override
     public Producto guardarProducto(Producto producto) {
         return productoRepository.save(producto);
     }

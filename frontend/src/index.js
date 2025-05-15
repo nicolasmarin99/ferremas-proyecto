@@ -1,19 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import App from './App';
+import DetalleProducto from './DetalleProducto'; // ✅ Nuevo componente
 import reportWebVitals from './reportWebVitals';
-import App from './App'; // Importa App.js
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// ✅ Importa Bootstrap aquí:
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/producto/:id" element={<DetalleProducto />} />
+      </Routes>
+    </Router>
   </React.StrictMode>
 );
 
-// Opcional: performance
 reportWebVitals();

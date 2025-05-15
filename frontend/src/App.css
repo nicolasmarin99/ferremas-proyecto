@@ -28,6 +28,10 @@
   color: #61dafb;
 }
 
+.card-hover:hover {
+  transform: translateY(-10px);
+  transition: transform 0.3s ease;
+}
 
 @keyframes App-logo-spin {
   from {
