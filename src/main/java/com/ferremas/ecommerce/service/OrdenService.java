@@ -25,18 +25,16 @@ public class OrdenService {
     }
 
     public Orden crearOrden(Orden orden) {
-        List<Producto> productosAdjuntos = new ArrayList<>();
+    orden.setFecha(LocalDateTime.now());
+    orden.setEstado("PENDIENTE");
 
-        for (Producto p : orden.getProductos()) {
-            Producto productoReal = productoRepository.findById(p.getId())
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + p.getId()));
-            productosAdjuntos.add(productoReal);
+    // Asignar los items correctamente
+    if (orden.getItems() != null) {
+        for (var item : orden.getItems()) {
+            item.setOrden(orden); // vincula cada item con la orden
         }
-
-        orden.setProductos(productosAdjuntos);
-        orden.setFecha(LocalDateTime.now());
-        orden.setEstado("PENDIENTE");
-
-        return ordenRepository.save(orden);
     }
+
+    return ordenRepository.save(orden);
+}
 }

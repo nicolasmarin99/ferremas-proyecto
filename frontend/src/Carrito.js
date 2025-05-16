@@ -46,6 +46,12 @@ const Carrito = () => {
           </ul>
 
           <h4>Total: ${total.toLocaleString()}</h4>
+          <button
+            className="btn btn-success mt-3"
+            onClick={() => navigate('/checkout')}
+          >
+            Finalizar compra
+          </button>
         </>
       )}
     </div>
