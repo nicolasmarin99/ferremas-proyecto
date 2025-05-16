@@ -17,21 +17,24 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // login y registro
-                .requestMatchers("/api/productos/**").permitAll() // ejemplo: ver productos
-                .requestMatchers("/api/productos/agregar").hasRole("ADMINISTRADOR")
-                .requestMatchers("/api/productos/eliminar/**").hasRole("ADMINISTRADOR")
-                .requestMatchers("/api/productos/editar/**").hasRole("ADMINISTRADOR")
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .cors()  // ✅ Habilita CORS
+        .and()
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/productos/**").permitAll()
+            .requestMatchers("/api/simular-pago").permitAll() // ✅ ¡Importante!
+            .requestMatchers("/api/productos/agregar").hasRole("ADMINISTRADOR")
+            .requestMatchers("/api/productos/eliminar/**").hasRole("ADMINISTRADOR")
+            .requestMatchers("/api/productos/editar/**").hasRole("ADMINISTRADOR")
+            .anyRequest().authenticated()
+        )
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+    return http.build();
+}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
