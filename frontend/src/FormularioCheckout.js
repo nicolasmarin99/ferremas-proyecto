@@ -47,64 +47,77 @@ const FormularioCheckout = () => {
   };
 
   const manejarEnvio = async (e) => {
-  e.preventDefault();
-  if (!validarFormulario()) return;
+    e.preventDefault();
+    if (!validarFormulario()) return;
 
-  const cliente = { ...formulario };
-  const productos = JSON.parse(localStorage.getItem('carrito')) || [];
+    const cliente = { ...formulario };
+    const productos = JSON.parse(localStorage.getItem('carrito')) || [];
+    const total = productos.reduce((acc, p) => acc + p.precio, 0);
 
-  const items = productos.map(p => ({
-    title: p.nombre,
-    quantity: 1,
-    currency_id: "CLP",
-    unit_price: p.precio
-  }));
+    // Guardar en localStorage (para respaldo en /resumen si quieres mantenerlo)
+    localStorage.setItem('cliente', JSON.stringify(cliente));
 
-  const body = {
-  items,
-  payer: {
-  name: cliente.nombre,
-  surname: cliente.apellido,
-  email: "test_user_863219767@testuser.com" // ✅ del comprador
-},
-  back_urls: {
-    success: "https://www.success.com",
-    failure: "https://www.failure.com",
-    pending: "https://www.pending.com"
-  },
-  auto_return: "approved"
-};
+    try {
+      // 🟢 1. Guardar orden + cliente + items en backend
+      const guardarRes = await fetch("http://localhost:8080/api/simular-pago", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cliente, productos, total })
+      });
 
-  // 🟢 Log para revisar exactamente qué se está enviando al backend
-  console.log("📤 Body enviado al backend:", JSON.stringify(body, null, 2));
+      if (!guardarRes.ok) {
+        throw new Error("❌ Error al guardar la orden y cliente.");
+      }
 
-  try {
-    const res = await fetch("http://localhost:8080/api/mercadopago/crear-preferencia", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
+      // 🟢 2. Preparar preferencia para MercadoPago (sin cambiar el body)
+      const items = productos.map(p => ({
+        title: p.nombre,
+        quantity: 1,
+        currency_id: "CLP",
+        unit_price: p.precio
+      }));
 
-    const data = await res.json();
+      const body = {
+        items,
+        payer: {
+          name: cliente.nombre,
+          surname: cliente.apellido,
+          email: "test_user_863219767@testuser.com" // ← correo del comprador de prueba
+        },
+        back_urls: {
+          success: "https://www.success.com",
+          failure: "https://www.failure.com",
+          pending: "https://www.pending.com"
+        },
+        auto_return: "approved"
+      };
 
-    if (res.status === 403) {
-      setMensaje("❌ Error de autenticación con Mercado Pago.");
-      return;
+      console.log("📤 Body enviado al backend:", JSON.stringify(body, null, 2));
+
+      const res = await fetch("http://localhost:8080/api/mercadopago/crear-preferencia", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (res.status === 403) {
+        setMensaje("❌ Error de autenticación con Mercado Pago.");
+        return;
+      }
+
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        console.error("❌ Preferencia no generada:", data);
+        setMensaje("❌ No se pudo generar la preferencia de pago.");
+      }
+    } catch (err) {
+      console.error(err);
+      setMensaje("❌ Error al procesar la compra.");
     }
-
-    if (data.init_point) {
-      localStorage.removeItem('carrito');
-      window.location.href = data.init_point;
-    } else {
-      console.error("❌ Preferencia no generada:", data);
-      setMensaje("❌ No se pudo generar la preferencia de pago.");
-    }
-  } catch (err) {
-    console.error(err);
-    setMensaje("❌ Error al conectar con el servidor.");
-  }
-};
-
+  };
 
   return (
     <div className="container mt-5">

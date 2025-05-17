@@ -1,23 +1,46 @@
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ResumenCompra = () => {
-  const { state } = useLocation();
-  const { cliente, productos, total } = state || {};
+  const navigate = useNavigate();
+  const [mensaje, setMensaje] = useState("Procesando compra...");
 
-  if (!cliente || !productos) return <div>No hay datos de compra.</div>;
+  useEffect(() => {
+    const cliente = JSON.parse(localStorage.getItem("cliente"));
+    const productos = JSON.parse(localStorage.getItem("carrito"));
+
+    if (!cliente || !productos || productos.length === 0) {
+      setMensaje("❌ Datos incompletos para guardar la compra.");
+      return;
+    }
+
+    const total = productos.reduce((acc, p) => acc + p.precio, 0);
+
+    fetch("http://localhost:8080/api/simular-pago", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cliente, productos, total })
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("✅ Respuesta del backend:", data);
+        setMensaje("✅ Compra registrada exitosamente.");
+        localStorage.removeItem("carrito");
+        localStorage.removeItem("cliente");
+      })
+      .catch(err => {
+        console.error("❌ Error al guardar la compra:", err);
+        setMensaje("❌ Error al registrar la compra.");
+      });
+  }, []);
 
   return (
-    <div className="container mt-4">
-      <h2>✅ Resumen de tu compra</h2>
-      <p><strong>Cliente:</strong> {cliente.nombre} {cliente.apellido}</p>
-      <p><strong>Dirección:</strong> {cliente.direccion}, {cliente.ciudad}</p>
-      <h4>Productos:</h4>
-      <ul>
-        {productos.map((p, i) => (
-          <li key={i}>{p.nombre} - ${p.precio}</li>
-        ))}
-      </ul>
-      <h5>Total: ${total}</h5>
+    <div className="container mt-5">
+      <h2>🧾 Resumen de Compra</h2>
+      <p>{mensaje}</p>
+      <button className="btn btn-primary" onClick={() => navigate("/")}>
+        Volver al inicio
+      </button>
     </div>
   );
 };
