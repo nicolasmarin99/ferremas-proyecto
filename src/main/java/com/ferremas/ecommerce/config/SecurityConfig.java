@@ -23,14 +23,15 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         .and()
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/productos/**").permitAll()
-            .requestMatchers("/api/simular-pago").permitAll() // ✅ ¡Importante!
-            .requestMatchers("/api/productos/agregar").hasRole("ADMINISTRADOR")
-            .requestMatchers("/api/productos/eliminar/**").hasRole("ADMINISTRADOR")
-            .requestMatchers("/api/productos/editar/**").hasRole("ADMINISTRADOR")
-            .anyRequest().authenticated()
-        )
+    .requestMatchers("/api/auth/**").permitAll()
+    .requestMatchers("/api/productos/**").permitAll()
+    .requestMatchers("/api/simular-pago").permitAll()
+    .requestMatchers("/api/mercadopago/**").permitAll() // <- Agrega esto
+    .requestMatchers("/api/productos/agregar").hasRole("ADMINISTRADOR")
+    .requestMatchers("/api/productos/eliminar/**").hasRole("ADMINISTRADOR")
+    .requestMatchers("/api/productos/editar/**").hasRole("ADMINISTRADOR")
+    .anyRequest().authenticated()
+)
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();

@@ -27,7 +27,7 @@ public class DataLoader implements CommandLineRunner {
 
         List<Producto> productos = List.of(
             new Producto(null, "FER-001", "Martillo", "Truper", 7990.0, 100, "Herramientas Manuales",
-                    "/img/martillo.jpg","Martillo de acero resistente ideal para carpintería."),
+                    "https://oteroindustrial.cl/media/webp_image/catalog/product/cache/95a2a922562ae098c3cd11cae8f12e92/s/t/st92306scx-martillo-fibra-de-vidrio-16oz.webp","Martillo de acero resistente ideal para carpintería."),
             new Producto(null, "FER-002", "Lijadora Orbital", "Makita", 84990.0, 12, "Herramientas Eléctricas",
                     "https://fi.makitamedia.com/images/3_Makita/301_machines/3011_a_GS1/30120_JPG_zoom/BO5031_C2L0.jpg","lijadora excelente para pulir o suavizar metales"),
             new Producto(null, "FER-003", "Casco de seguridad", "3M", 10990.0, 30, "Seguridad",

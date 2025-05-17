@@ -97,33 +97,44 @@ function App() {
             <h1 className="text-center mb-4 text-white">🛒 Ferremas - Productos Disponibles</h1>
             {/* Cards de productos */}
             <div className="row">
-              {productosFiltrados.map(producto => (
-                <div className="col-md-4 mb-4" key={producto.id}>
-                  <div className="card h-100 shadow-sm card-hover">
-                    <Link to={`/producto/${producto.id}`}>
-                      <img src="https://via.placeholder.com/300x180.png?text=Producto" className="card-img-top" alt={producto.nombre} />
-                    </Link>
-                    <div className="card-body">
-                      <h5 className="card-title">{producto.nombre}</h5>
-                      <p className="card-text">
-                        <strong>Categoría:</strong> {producto.categoria} <br />
-                        <strong>Precio:</strong> ${producto.precio}
-                      </p>
-                      <button className="btn btn-primary w-100" onClick={() => agregarAlCarrito(producto)}>
-                        Agregar al carrito
-                      </button>
-                      {dolar && (
-                        <button className="btn btn-secondary mt-2 w-100" onClick={() => toggleMostrarUSD(producto.id)}>
-                          {mostrarUSD[producto.id] ? 'Ocultar USD' : 'Ver en USD'}
-                        </button>
-                      )}
-                      {mostrarUSD[producto.id] && (
-                        <p className="mt-2"><strong>Precio en USD:</strong> ${ (producto.precio / dolar).toFixed(2) }</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
+              {productosFiltrados.map(producto => {
+  const imagenSrc = producto.imagenUrl?.startsWith("http")
+    ? producto.imagenUrl
+    : `/img/${producto.imagenUrl}`;
+
+  return (
+    <div className="col-md-4 mb-4" key={producto.id}>
+      <div className="card h-100 shadow-sm card-hover">
+        <Link to={`/producto/${producto.id}`}>
+          <img
+            src={imagenSrc}
+            className="card-img-top"
+            alt={producto.nombre}
+            style={{ height: "180px", objectFit: "cover" }}
+          />
+        </Link>
+        <div className="card-body">
+          <h5 className="card-title">{producto.nombre}</h5>
+          <p className="card-text">
+            <strong>Categoría:</strong> {producto.categoria} <br />
+            <strong>Precio:</strong> ${producto.precio}
+          </p>
+          <button className="btn btn-primary w-100" onClick={() => agregarAlCarrito(producto)}>
+            Agregar al carrito
+          </button>
+          {dolar && (
+            <button className="btn btn-secondary mt-2 w-100" onClick={() => toggleMostrarUSD(producto.id)}>
+              {mostrarUSD[producto.id] ? 'Ocultar USD' : 'Ver en USD'}
+            </button>
+          )}
+          {mostrarUSD[producto.id] && (
+            <p className="mt-2"><strong>Precio en USD:</strong> ${(producto.precio / dolar).toFixed(2)}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+})}
             </div>
           </>
         } />
@@ -134,3 +145,4 @@ function App() {
 }
 
 export default App;
+

@@ -7,11 +7,30 @@ const DetalleProducto = () => {
   const [producto, setProducto] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/productos/id/${id}`)
-      .then(res => res.json())
-      .then(data => setProducto(data))
-      .catch(err => console.error('Error al obtener producto:', err));
-  }, [id]);
+  const fetchProducto = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = token
+  ? { "Authorization": `Bearer ${token}` }
+  : {}; // Si no hay token, no se manda nada
+
+const res = await fetch(`http://localhost:8080/api/productos/${id}`, {
+  headers
+});
+
+      if (!res.ok) {
+        throw new Error(`Error HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      setProducto(data);
+    } catch (error) {
+      console.error('Error al obtener producto:', error);
+    }
+  };
+
+  fetchProducto();
+}, [id]);
 
   const agregarAlCarrito = () => {
     const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
