@@ -1,27 +1,32 @@
 package com.ferremas.ecommerce.controller;
 
+import com.ferremas.ecommerce.dto.OrdenDTO;
 import com.ferremas.ecommerce.model.Orden;
-import com.ferremas.ecommerce.service.OrdenService;
+import com.ferremas.ecommerce.repository.OrdenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/ordenes")
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api")
 public class OrdenController {
 
     @Autowired
-    private OrdenService ordenService;
+    private OrdenRepository ordenRepository;
 
-    @GetMapping
-    public List<Orden> obtenerTodas() {
-        return ordenService.obtenerTodas();
-    }
-
-    @PostMapping
-    public Orden crearOrden(@RequestBody Orden orden) {
-        return ordenService.crearOrden(orden);
+    @GetMapping("/ordenes")
+    public List<OrdenDTO> obtenerOrdenes() {
+        List<Orden> ordenes = ordenRepository.findAll();
+        return ordenes.stream()
+                .map(o -> new OrdenDTO(
+                        o.getId(),
+                        o.getEstado(),
+                        o.getFecha(),
+                        o.getTotal(),
+                        o.getUsuario()
+                ))
+                .collect(Collectors.toList());
     }
 }

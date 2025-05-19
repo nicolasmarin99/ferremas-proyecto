@@ -1,0 +1,27 @@
+package com.ferremas.ecommerce.controller;
+
+import com.ferremas.ecommerce.model.Orden;
+import com.ferremas.ecommerce.repository.OrdenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/ordenes")
+public class OrdenAdminController {
+
+    @Autowired
+    private OrdenRepository ordenRepository;
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<List<Orden>> obtenerOrdenes() {
+        List<Orden> ordenes = ordenRepository.findAll();
+        return ResponseEntity.ok(ordenes);
+    }
+}

@@ -4,6 +4,7 @@ import './App.css';
 import Login from './Login';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import FormularioAgregarProducto from './FormularioAgregarProducto';
+import OrdenesAdmin from './OrdenesAdmin';
 
 function App() {
   const [productos, setProductos] = useState([]);
@@ -135,6 +136,12 @@ function App() {
                 <li className="nav-item">
                   <Link className="btn btn-danger ms-2" onClick={cerrarSesion}>Cerrar sesión</Link>
                 </li>
+                {rol === 'ADMINISTRADOR' && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/ordenes-admin">Órdenes</Link>
+                </li>
+)}
+
               </ul>
               <form className="d-flex">
                 <input className="form-control me-2" type="search" placeholder="Buscar" value={busqueda} onChange={handleBusquedaChange} />

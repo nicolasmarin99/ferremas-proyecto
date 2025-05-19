@@ -52,11 +52,13 @@ const FormularioCheckout = () => {
 
     const cliente = { ...formulario };
     const productos = JSON.parse(localStorage.getItem('carrito')) || [];
-    const total = productos.reduce((acc, p) => acc + (p.precio * (p.cantidad || 1)), 0);
+    const total = productos.reduce((acc, p) => acc + p.precio, 0);
 
+    // Guardar en localStorage (para respaldo en /resumen si quieres mantenerlo)
     localStorage.setItem('cliente', JSON.stringify(cliente));
 
     try {
+      // 🟢 1. Guardar orden + cliente + items en backend
       const guardarRes = await fetch("http://localhost:8080/api/simular-pago", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,9 +69,10 @@ const FormularioCheckout = () => {
         throw new Error("❌ Error al guardar la orden y cliente.");
       }
 
+      // 🟢 2. Preparar preferencia para MercadoPago (sin cambiar el body)
       const items = productos.map(p => ({
         title: p.nombre,
-        quantity: p.cantidad || 1,
+        quantity: 1,
         currency_id: "CLP",
         unit_price: p.precio
       }));
@@ -79,7 +82,7 @@ const FormularioCheckout = () => {
         payer: {
           name: cliente.nombre,
           surname: cliente.apellido,
-          email: "test_user_863219767@testuser.com"
+          email: "test_user_863219767@testuser.com" // ← correo del comprador de prueba
         },
         back_urls: {
           success: "https://www.success.com",
@@ -88,6 +91,8 @@ const FormularioCheckout = () => {
         },
         auto_return: "approved"
       };
+
+      console.log("📤 Body enviado al backend:", JSON.stringify(body, null, 2));
 
       const res = await fetch("http://localhost:8080/api/mercadopago/crear-preferencia", {
         method: "POST",

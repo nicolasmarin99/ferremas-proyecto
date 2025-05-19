@@ -10,6 +10,7 @@ import FormularioCheckout from './FormularioCheckout';
 import ResumenCompra from './ResumenCompra';
 import Login from './Login'; // ✅ Agrega esta línea
 import Registro from './Registro';
+import OrdenesAdmin from './OrdenesAdmin';
 
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
@@ -25,6 +26,7 @@ root.render(
         <Route path="/resumen" element={<ResumenCompra />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/ordenes-admin" element={<OrdenesAdmin />} />
       </Routes>
     </Router>
   </React.StrictMode>
