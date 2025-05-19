@@ -14,6 +14,8 @@ function App() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [productoEnEdicion, setProductoEnEdicion] = useState(null);
   const navigate = useNavigate();
+  const [username, setUsername] = useState(localStorage.getItem('username'));
+
 
   useEffect(() => {
     fetch('http://localhost:8080/api/productos')
@@ -31,10 +33,11 @@ function App() {
   }, []);
 
   const cerrarSesion = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("rol");
-  alert("👋 Sesión cerrada");
-  navigate("/login");
+  localStorage.removeItem('token');
+  localStorage.removeItem('rol');
+  localStorage.removeItem('username');
+  setUsername(null);  // 🔄 actualiza estado
+  window.location.href = "/"; // opcional: redirige al inicio
 };
 
   const abrirFormularioEdicion = (producto) => {
@@ -120,9 +123,15 @@ function App() {
                 <li className="nav-item">
                   <Link className="nav-link" to="/carrito">Carrito</Link>
                 </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">Iniciar sesión</Link>
-                </li>
+                {username ? (
+                  <li className="nav-item">
+                    <span className="nav-link">👤 {username}</span>
+                  </li>
+                ) : (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/login">Iniciar sesión</Link>
+                  </li>
+                )}
                 <li className="nav-item">
                   <Link className="btn btn-danger ms-2" onClick={cerrarSesion}>Cerrar sesión</Link>
                 </li>

@@ -23,6 +23,7 @@ function Login() {
         localStorage.setItem('token', data.token);
         const payload = JSON.parse(atob(data.token.split('.')[1]));
         localStorage.setItem('rol', payload.rol);
+        localStorage.setItem('username', payload.sub);
         alert('✅ Login exitoso');
         navigate('/');
       } else {
@@ -49,6 +50,9 @@ function Login() {
         </div>
         <button type="submit" className="btn btn-primary">Ingresar</button>
       </form>
+      <p className="mt-3">
+  ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
+</p>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import Carrito from './Carrito';
 import FormularioCheckout from './FormularioCheckout';
 import ResumenCompra from './ResumenCompra';
 import Login from './Login'; // ✅ Agrega esta línea
+import Registro from './Registro';
 
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
@@ -23,6 +24,7 @@ root.render(
         <Route path="/checkout" element={<FormularioCheckout />} />
         <Route path="/resumen" element={<ResumenCompra />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
       </Routes>
     </Router>
   </React.StrictMode>
