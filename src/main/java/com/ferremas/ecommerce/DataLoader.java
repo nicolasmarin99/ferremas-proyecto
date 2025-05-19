@@ -5,6 +5,9 @@ import com.ferremas.ecommerce.repository.OrdenRepository;
 import com.ferremas.ecommerce.repository.ProductoRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import com.ferremas.ecommerce.model.Usuario;
+import com.ferremas.ecommerce.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -13,11 +16,18 @@ public class DataLoader implements CommandLineRunner {
 
     private final ProductoRepository productoRepository;
     private final OrdenRepository ordenRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataLoader(ProductoRepository productoRepository, OrdenRepository ordenRepository) {
-        this.productoRepository = productoRepository;
-        this.ordenRepository = ordenRepository;
-    }
+    public DataLoader(ProductoRepository productoRepository,
+                  OrdenRepository ordenRepository,
+                  UsuarioRepository usuarioRepository,
+                  PasswordEncoder passwordEncoder) {
+    this.productoRepository = productoRepository;
+    this.ordenRepository = ordenRepository;
+    this.usuarioRepository = usuarioRepository;
+    this.passwordEncoder = passwordEncoder;
+}
 
     @Override
     public void run(String... args) throws Exception {
@@ -50,5 +60,14 @@ public class DataLoader implements CommandLineRunner {
 
         productoRepository.saveAll(productos);
         System.out.println("📦 Productos con imágenes cargados correctamente.");
+
+         if (usuarioRepository.findByUsername("admin").isEmpty()) {
+    Usuario admin = new Usuario();
+    admin.setUsername("admin");
+    admin.setPassword(passwordEncoder.encode("admin123"));
+    admin.setRol("ADMINISTRADOR"); // 👈 Rol correcto
+    usuarioRepository.save(admin);
+    System.out.println("👑 Usuario administrador creado (admin/admin123)");
+}
     }
 }
