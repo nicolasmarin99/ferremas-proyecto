@@ -13,6 +13,7 @@ function App() {
   const [mostrarUSD, setMostrarUSD] = useState({});
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [productoEnEdicion, setProductoEnEdicion] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('http://localhost:8080/api/productos')
@@ -28,6 +29,13 @@ function App() {
       })
       .catch(error => console.error('Error al obtener el valor del dólar:', error));
   }, []);
+
+  const cerrarSesion = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("rol");
+  alert("👋 Sesión cerrada");
+  navigate("/login");
+};
 
   const abrirFormularioEdicion = (producto) => {
   setProductoEnEdicion(producto);
@@ -114,6 +122,9 @@ function App() {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/login">Iniciar sesión</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="btn btn-danger ms-2" onClick={cerrarSesion}>Cerrar sesión</Link>
                 </li>
               </ul>
               <form className="d-flex">
