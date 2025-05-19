@@ -8,15 +8,14 @@ import com.ferremas.ecommerce.model.PagoRequest;
 import com.ferremas.ecommerce.repository.ClienteRepository;
 import com.ferremas.ecommerce.repository.OrdenItemRepository;
 import com.ferremas.ecommerce.repository.OrdenRepository;
+import com.ferremas.ecommerce.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -31,6 +30,9 @@ public class PagoController {
     @Autowired
     private OrdenItemRepository ordenItemRepository;
 
+    @Autowired
+    private ProductoRepository productoRepository;
+
     @PostMapping("/simular-pago")
     public ResponseEntity<?> simularPago(@RequestBody PagoRequest request) {
         try {
@@ -43,32 +45,47 @@ public class PagoController {
             orden.setTotal(request.getTotal());
             orden.setEstado("Pagado");
 
-            // Asignar nombre completo como usuario
+            // Nombre de usuario en la orden
             String nombreCompleto = cliente.getNombre() + " " + cliente.getApellido();
             orden.setUsuario(nombreCompleto);
-
-            // Asignar fecha actual
             orden.setFecha(LocalDateTime.now());
 
-            // Guardar orden
             ordenRepository.save(orden);
 
-            // Guardar ítems
+            // Procesar productos
             for (Producto producto : request.getProductos()) {
+                Optional<Producto> optionalProductoBD = productoRepository.findById(producto.getId());
+
+                if (optionalProductoBD.isEmpty()) {
+                    System.err.println("⚠ Producto con ID " + producto.getId() + " no encontrado. Se omite.");
+                    continue;
+                }
+
+                Producto productoBD = optionalProductoBD.get();
+                int cantidad = producto.getCantidad() != null ? producto.getCantidad() : 1;
+
+                if (productoBD.getStock() < cantidad) {
+                    throw new RuntimeException("Stock insuficiente para: " + productoBD.getNombre());
+                }
+
+                productoBD.setStock(productoBD.getStock() - cantidad);
+                productoRepository.save(productoBD);
+
                 OrdenItem item = new OrdenItem();
-                item.setNombreProducto(producto.getNombre());
-                item.setPrecio(producto.getPrecio());
+                item.setNombreProducto(productoBD.getNombre());
+                item.setPrecio(productoBD.getPrecio() * cantidad);
+                item.setCantidad(cantidad);
                 item.setOrden(orden);
                 ordenItemRepository.save(item);
             }
 
-            // Respuesta exitosa
             return ResponseEntity.ok().body(Map.of(
-                "mensaje", "✅ Pago simulado exitosamente",
-                "ordenId", orden.getId()
+                    "mensaje", "✅ Pago simulado exitosamente",
+                    "ordenId", orden.getId()
             ));
 
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body("❌ Error al simular el pago: " + e.getMessage());
         }
     }

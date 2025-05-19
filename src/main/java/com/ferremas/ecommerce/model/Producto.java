@@ -111,5 +111,16 @@ public class Producto {
 
     // Constructor vacío (requerido por JPA)
     public Producto() {}
+
+    @Transient
+private Integer cantidad;
+
+public Integer getCantidad() {
+    return cantidad;
+}
+
+public void setCantidad(Integer cantidad) {
+    this.cantidad = cantidad;
+}
 }
 
